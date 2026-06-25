@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>מסלול — שליחויות פרטיות</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=Heebo:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#14171C;--surface:#1C2027;--s2:#242A33;--border:#323943;--bstrong:#454C57;--text:#F3F1EA;--muted:#8B919C;--lime:#D7FF3A;--teal:#4FB6C9;--danger:#FF6B6B;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:18px 14px 60px;}
+.wrap{max-width:430px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+
+/* brand */
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-logo{width:36px;height:36px;border-radius:10px;background:var(--lime);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.brand-title{font-family:'Rubik',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;}
+.brand-sub{font-size:11px;color:var(--muted);}
+
+/* contact */
+.contact-bar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 14px;}
+.cbtn{display:flex;align-items:center;gap:6px;border-radius:10px;padding:7px 13px;font-size:13px;font-weight:600;text-decoration:none;flex-shrink:0;font-family:'Heebo',sans-serif;}
+.cbtn-call{background:rgba(79,182,201,.15);color:var(--teal);border:1px solid rgba(79,182,201,.3);}
+.cbtn-wa{background:rgba(37,211,102,.12);color:#25D366;border:1px solid rgba(37,211,102,.3);}
+.cnum{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-right:auto;direction:ltr;}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px;}
+.sec-title{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+
+/* hero */
+.hero{padding:14px 14px 18px;}
+.hero-row{display:flex;justify-content:space-between;gap:10px;margin-bottom:22px;}
+.hero-addr{flex:1;min-width:0;}
+.hero-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+.hero-val{font-size:12.5px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);}
+.hero-val.set{color:var(--text);}
+.track{position:relative;height:2px;background-image:repeating-linear-gradient(to right,var(--tc,var(--bstrong)) 0 8px,transparent 8px 16px);}
+.pin{position:absolute;top:-4px;width:10px;height:10px;border-radius:50%;background:var(--tc,var(--bstrong));}
+.vehicle{position:absolute;top:-13px;right:0;font-size:20px;transition:color .3s;}
+.vehicle.moving{animation:travel 2s linear infinite;}
+@keyframes travel{from{right:0}to{right:calc(100% - 24px)}}
+
+/* mode toggle */
+.toggle{display:grid;grid-template-columns:1fr 1fr;gap:3px;background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:3px;}
+.toggle-btn{border:none;background:transparent;color:var(--muted);font-family:'Heebo',sans-serif;font-size:13px;font-weight:600;border-radius:11px;padding:10px 6px;cursor:pointer;transition:background .15s,color .15s;}
+.toggle-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+
+/* fields */
+.field{margin-bottom:10px;}
+.field:last-child{margin-bottom:0;}
+.flabel{font-size:12px;color:var(--muted);margin-bottom:5px;display:block;}
+.flabel.req::after{content:" *";color:var(--danger);}
+.irow{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:0 12px;transition:border-color .15s;}
+.irow:focus-within{border-color:var(--teal);}
+.irow input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:'Heebo',sans-serif;font-size:14px;padding:11px 0;min-width:0;}
+.irow input::placeholder{color:var(--muted);}
+.irow svg,.irow .ico{flex-shrink:0;color:var(--muted);}
+.ok{color:var(--lime);font-size:14px;}
+textarea{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:10px 12px;font-family:'Heebo',sans-serif;font-size:14px;outline:none;resize:none;}
+textarea:focus{border-color:var(--teal);}
+textarea::placeholder{color:var(--muted);}
+
+/* grids + tiles */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.tile{background:var(--s2);border:1.5px solid var(--border);border-radius:14px;padding:10px 6px 12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:border-color .15s,background .15s;text-align:center;}
+.tile .ico{font-size:20px;}
+.tile-lbl{font-size:12px;font-weight:600;}
+.tile-hint{font-size:9.5px;color:var(--muted);line-height:1.3;}
+.tile.sel-pkg{border-color:var(--text);background:var(--surface);}
+.tile.sel-express{border-color:var(--danger);background:rgba(255,107,107,.08);}
+.tile.sel-urgent{border-color:var(--lime);background:rgba(215,255,58,.08);}
+.tile.sel-regular{border-color:var(--teal);background:rgba(79,182,201,.08);}
+
+/* distance */
+.km-big{text-align:center;font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;margin:4px 0 2px;}
+.km-cap{text-align:center;font-size:11px;color:var(--muted);margin-bottom:8px;}
+.km-cap.auto{color:var(--lime);}
+input[type=range]{width:100%;accent-color:var(--lime);}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.chip{background:var(--s2);border:1px solid var(--border);color:var(--muted);font-size:11px;border-radius:999px;padding:4px 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;}
+.chip.active{border-color:var(--teal);color:var(--text);}
+
+/* price */
+.prow{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:12.5px;}
+.prow .lbl{color:var(--muted);}
+.prow .val{font-family:'JetBrains Mono',monospace;font-weight:600;}
+.pdiv{height:1px;background:var(--border);margin:7px 0;}
+.ptotal{display:flex;justify-content:space-between;align-items:baseline;}
+.ptotal-lbl{font-size:14px;font-weight:700;}
+.ptotal-val{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:var(--lime);}
+
+/* bundle legs */
+.leg-card{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;}
+.leg-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.leg-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--teal);}
+.leg-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;}
+.leg-del:hover{color:var(--danger);}
+.leg-from{font-size:11px;color:var(--muted);margin-bottom:8px;}
+
+/* buttons */
+.btn-primary{background:var(--lime);color:#10130A;font-weight:700;border:none;border-radius:14px;padding:15px;font-size:15px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Heebo',sans-serif;text-decoration:none;}
+.btn-primary:active{opacity:.85;}
+.btn-sec{background:var(--s2);border:1px solid var(--bstrong);color:var(--text);font-weight:600;border-radius:12px;padding:11px;font-size:13px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Heebo',sans-serif;margin-top:8px;}
+.btn-sec:disabled{opacity:.5;cursor:not-allowed;}
+.btn-add{background:none;border:1.5px dashed var(--bstrong);color:var(--teal);font-weight:600;border-radius:12px;padding:10px;font-size:13px;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:7px;font-family:'Heebo',sans-serif;margin-top:8px;}
+
+/* alerts */
+.err-box{background:rgba(255,107,107,.1);border:1px solid var(--danger);color:#FFB3B3;font-size:12.5px;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:7px;}
+.ok-box{background:rgba(215,255,58,.1);border:1px solid var(--lime);color:var(--lime);font-size:13px;border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:8px;font-weight:600;}
+.info-box{background:rgba(79,182,201,.08);border:1px solid rgba(79,182,201,.3);color:var(--teal);font-size:11.5px;border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:6px;margin-top:8px;}
+.hidden{display:none!important;}
+
+/* spinner */
+.spin{display:inline-block;animation:sp .8s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Brand -->
+  <div class="brand">
+    <div class="brand-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10130A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
+    </div>
+    <div>
+      <div class="brand-title">מסלול</div>
+      <div class="brand-sub">שליחויות פרטיות, ישר ליעד</div>
+    </div>
+  </div>
+
+  <!-- Contact bar -->
+  <div class="contact-bar">
+    <a href="tel:0549252094" class="cbtn cbtn-call">📞 חייג</a>
+    <a href="https://wa.me/972549252094" target="_blank" class="cbtn cbtn-wa">💬 WhatsApp</a>
+    <span class="cnum">054-9252094</span>
+  </div>
+
+  <!-- Success -->
+  <div id="success-box" class="ok-box hidden">✅ <span id="success-msg"></span></div>
+
+  <!-- Hero -->
+  <div class="card hero">
+    <div class="hero-row">
+      <div class="hero-addr">
+        <div class="hero-label">איסוף</div>
+        <div class="hero-val" id="hero-from">כתובת מוצא</div>
+      </div>
+      <div class="hero-addr" style="text-align:left">
+        <div class="hero-label">מסירה</div>
+        <div class="hero-val" id="hero-to">כתובת יעד</div>
+      </div>
+    </div>
+    <div class="track" id="track">
+      <div class="pin" style="right:0"></div>
+      <div class="pin" style="left:0"></div>
+      <div class="vehicle" id="vehicle">🚚</div>
+    </div>
+  </div>
+
+  <!-- Mode toggle -->
+  <div class="toggle">
+    <button class="toggle-btn active" id="btn-single" onclick="setMode('single')">📦 משלוח יחיד</button>
+    <button class="toggle-btn" id="btn-bundle" onclick="setMode('bundle')">🗂️ בנדל — מסירות מרובות</button>
+  </div>
+
+  <!-- Pickup (shared) -->
+  <div class="card">
+    <div class="sec-title">נקודת איסוף</div>
+    <div class="field">
+      <label class="flabel req">כתובת איסוף</label>
+      <div class="irow">
+        <span>📍</span>
+        <input id="from-addr" placeholder="רחוב, מספר, עיר" oninput="onFromChange()" />
+        <span id="from-ok" class="ok hidden">✓</span>
+      </div>
+    </div>
+    <div class="field">
+      <label class="flabel req">טלפון איש קשר באיסוף</label>
+      <div class="irow">
+        <span>📞</span>
+        <input id="from-phone" type="tel" placeholder="050-0000000"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- SINGLE mode -->
+  <div id="single-section">
+    <div class="card" style="margin-bottom:14px">
+      <div class="sec-title">נקודת מסירה</div>
+      <div class="field">
+        <label class="flabel req">כתובת מסירה</label>
+        <div class="irow">
+          <span>📍</span>
+          <input id="to-addr" placeholder="רחוב, מספר, עיר" oninput="onToChange()"/>
+          <span id="to-ok" class="ok hidden">✓</span>
+        </div>
+      </div>
+      <div class="field">
+        <label class="flabel req">טלפון איש קשר במסירה</label>
+        <div class="irow">
+          <span>📞</span>
+          <input id="to-phone" type="tel" placeholder="050-0000000"/>
+        </div>
+      </div>
+      <button class="btn-sec" id="check-btn" onclick="checkSingleRoute()">🔍 חשב מרחק נסיעה אוטומטית</button>
+      <div id="check-err" class="err-box hidden" style="margin-top:8px"></div>
+      <div id="check-ok" class="info-box hidden"></div>
+    </div>
+
+    <!-- Distance single -->
+    <div class="card" style="margin-bottom:14px">
+      <div class="sec-title">
+        <span>מרחק נסיעה</span>
+        <button id="toggle-manual-btn" onclick="toggleManual()" style="background:none;border:none;color:var(--teal);font-size:11px;cursor:pointer;font-weight:600;font-family:'Heebo',sans-serif;" class="hidden">ידני</button>
+      </div>
+      <div class="km-big" id="km-display">5.0</div>
+      <div class="km-cap" id="km-cap">ידני</div>
+      <div id="manual-controls">
+        <input type="range" min="0.5" max="40" step="0.5" value="5" oninput="onKmSlide(this.value)"/>
+        <div class="chips" id="km-chips"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUNDLE mode -->
+  <div id="bundle-section" class="hidden">
+    <div class="card" style="margin-bottom:14px">
+      <div class="sec-title">נקודות מסירה</div>
+      <div id="legs-container"></div>
+      <button class="btn-add" onclick="addLeg()">+ הוסף עצירה</button>
+      <button class="btn-sec" id="check-bundle-btn" onclick="checkBundleRoute()">🔍 חשב מרחקים לכל העצירות</button>
+      <div id="bundle-check-err" class="err-box hidden" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <!-- Package size -->
+  <div class="card">
+    <div class="sec-title">גודל החבילה</div>
+    <div class="g4" id="sizes"></div>
+  </div>
+
+  <!-- Urgency -->
+  <div class="card">
+    <div class="sec-title">רמת דחיפות</div>
+    <div class="g3" id="urgencies"></div>
+  </div>
+
+  <!-- Price -->
+  <div class="card">
+    <div class="sec-title">מחיר</div>
+    <div id="price-breakdown"></div>
+    <div class="pdiv"></div>
+    <div class="ptotal">
+      <span class="ptotal-lbl">סה״כ לתשלום</span>
+      <span class="ptotal-val" id="total-display">₪40</span>
+    </div>
+  </div>
+
+  <!-- Notes -->
+  <div class="card">
+    <div class="sec-title">הערות לשליח</div>
+    <textarea id="notes" rows="2" placeholder="קוד לבניין, קומה, פרטים נוספים..."></textarea>
+  </div>
+
+  <div id="submit-err" class="err-box hidden"></div>
+
+  <button class="btn-primary" onclick="submitOrder()">💬 שלח הזמנה לוואטסאפ</button>
+</div>
+
+<script>
+const WA = '972549252094';
+
+/* ── State ── */
+let mode = 'single';
+let selectedSize = null;
+let selectedUrgency = null;
+let manualKm = 5;
+let autoKm = null;
+let useAuto = false;
+let autoMin = 0;
+let checking = false;
+let legs = [{toAddr:'',toPhone:'',manualKm:5,autoKm:null,useAuto:false,autoMin:0},{toAddr:'',toPhone:'',manualKm:5,autoKm:null,useAuto:false,autoMin:0}];
+
+const SIZES = [
+  {id:'envelope', label:'מעטפה', hint:'מסמכים', ico:'✉️'},
+  {id:'small',    label:'קטן',   hint:'עד תיק קטן', ico:'🛍️'},
+  {id:'medium',   label:'בינוני',hint:'קופסה', ico:'📦'},
+  {id:'large',    label:'גדול',  hint:'דורש רכב', ico:'🚛'},
+];
+const URGENCIES = [
+  {id:'express', label:'אקספרס', hint:'תוך שעתיים',     ico:'⚡', color:'var(--danger)', mult:1.5},
+  {id:'urgent',  label:'דחוף',   hint:'תוך 4 שעות',     ico:'⚡', color:'var(--lime)',   mult:1.0},
+  {id:'regular', label:'רגיל',   hint:'1–2 ימי עסקים',  ico:'🕐', color:'var(--teal)',   mult:0.7},
+];
+const KM_PRESETS = [2,5,8,12,20,30];
+
+/* ── Pricing ── */
+function legCost(km) {
+  let rate = 10, cost = 0;
+  const full = Math.floor(km), frac = km - full;
+  for(let i=0;i<full;i++){cost+=rate;rate*=0.92;}
+  if(frac>0) cost+=frac*rate;
+  return cost;
+}
+function calcTotal() {
+  const mult = URGENCIES.find(u=>u.id===selectedUrgency)?.mult ?? 1;
+  if(mode==='single'){
+    const km = useAuto && autoKm!==null ? autoKm : manualKm;
+    return Math.round((40 + legCost(km)) * mult);
+  } else {
+    let total = 0;
+    legs.forEach((l,i)=>{
+      const km = l.useAuto && l.autoKm!==null ? l.autoKm : l.manualKm;
+      if(i===0) total += Math.round((40+legCost(km))*mult);
+      else total += Math.round(legCost(km));
+    });
+    return total;
+  }
+}
+
+/* ── Render ── */
+function renderSizes() {
+  document.getElementById('sizes').innerHTML = SIZES.map(s=>`
+    <div class="tile${selectedSize===s.id?' sel-pkg':''}" onclick="selectSize('${s.id}')">
+      <div class="ico">${s.ico}</div>
+      <div class="tile-lbl">${s.label}</div>
+      <div class="tile-hint">${s.hint}</div>
+    </div>`).join('');
+}
+function renderUrgencies() {
+  document.getElementById('urgencies').innerHTML = URGENCIES.map(u=>{
+    let cls = selectedUrgency===u.id ? `sel-${u.id}` : '';
+    return `<div class="tile ${cls}" onclick="selectUrgency('${u.id}')">
+      <div class="ico" style="color:${selectedUrgency===u.id?u.color:'var(--muted)'}">${u.ico}</div>
+      <div class="tile-lbl">${u.label}</div>
+      <div class="tile-hint">${u.hint}</div>
+    </div>`;
+  }).join('');
+}
+function renderPrice() {
+  const mult = URGENCIES.find(u=>u.id===selectedUrgency)?.mult ?? 1;
+  let html = '';
+  if(mode==='single'){
+    const km = useAuto && autoKm!==null ? autoKm : manualKm;
+    const dist = legCost(km);
+    html += `<div class="prow"><span class="lbl">מחיר בסיס</span><span class="val">₪40</span></div>`;
+    html += `<div class="prow"><span class="lbl">נסיעה ${km.toFixed(1)} ק״מ (−8% לכל ק״מ)</span><span class="val">₪${dist.toFixed(0)}</span></div>`;
+    if(mult!==1){
+      const base=40+dist;
+      const diff=Math.round(base*Math.abs(mult-1));
+      html+=`<div class="prow"><span class="lbl" style="color:${mult>1?'var(--danger)':'var(--teal)'}">${mult>1?'תוספת אקספרס ×1.5':'הנחת רגיל −30%'}</span><span class="val" style="color:${mult>1?'var(--danger)':'var(--teal)'}">${mult>1?'+':'-'}₪${diff}</span></div>`;
+    }
+  } else {
+    legs.forEach((l,i)=>{
+      const km = l.useAuto&&l.autoKm!==null?l.autoKm:l.manualKm;
+      const p = i===0?Math.round((40+legCost(km))*mult):Math.round(legCost(km));
+      html+=`<div class="prow"><span class="lbl">מסירה ${i+1} · ${km.toFixed(1)} ק״מ${i===0?' (כולל בסיס)':''}</span><span class="val">₪${p}</span></div>`;
+    });
+    if(mult!==1) html+=`<div class="prow"><span class="lbl" style="color:${mult>1?'var(--danger)':'var(--teal)'}">${mult>1?'תוספת אקספרס':'הנחת רגיל −30%'}</span></div>`;
+  }
+  document.getElementById('price-breakdown').innerHTML = html;
+  document.getElementById('total-display').textContent = '₪'+calcTotal();
+}
+function renderKm() {
+  const km = useAuto&&autoKm!==null ? autoKm : manualKm;
+  document.getElementById('km-display').textContent = km.toFixed(1);
+  const cap = document.getElementById('km-cap');
+  if(useAuto&&autoKm!==null){cap.textContent=`מחושב אוטומטית · כ-${Math.round(autoMin)} דק׳`;cap.className='km-cap auto';}
+  else{cap.textContent='ידני';cap.className='km-cap';}
+  document.getElementById('manual-controls').style.display=(useAuto&&autoKm!==null)?'none':'block';
+  const tmb=document.getElementById('toggle-manual-btn');
+  if(autoKm!==null){tmb.classList.remove('hidden');tmb.textContent=useAuto?'ידני':'אוטומטי';}
+  else tmb.classList.add('hidden');
+}
+function renderHero(){
+  const fv=document.getElementById('hero-from');
+  const tv=document.getElementById('hero-to');
+  const fa=document.getElementById('from-addr').value;
+  const ta=mode==='single'?document.getElementById('to-addr').value:`${legs.length} עצירות`;
+  fv.textContent=fa||'כתובת מוצא'; fv.className='hero-val'+(fa?' set':'');
+  tv.textContent=ta||(mode==='single'?'כתובת יעד':''); tv.className='hero-val'+(ta?' set':'');
+  const urg=URGENCIES.find(u=>u.id===selectedUrgency);
+  const tc=urg?urg.color:'var(--bstrong)';
+  document.getElementById('track').style.setProperty('--tc',tc);
+  const v=document.getElementById('vehicle');
+  const icons={envelope:'✉️',small:'🛍️',medium:'📦',large:'🚛'};
+  v.textContent=icons[selectedSize]||'🚚';
+  v.className='vehicle'+(selectedUrgency?' moving':'');
+}
+function renderLegs(){
+  const c=document.getElementById('legs-container');
+  c.innerHTML='';
+  legs.forEach((l,i)=>{
+    const origin=i===0?(document.getElementById('from-addr').value||'האיסוף'):(legs[i-1].toAddr||`מסירה ${i}`);
+    const km=l.useAuto&&l.autoKm!==null?l.autoKm:l.manualKm;
+    const autoTag=l.useAuto&&l.autoKm!==null?`<span style="color:var(--lime);font-size:10px"> ✓ אוטו</span>`:'';
+    c.innerHTML+=`<div class="leg-card" id="leg-${i}">
+      <div class="leg-hdr">
+        <span class="leg-num">מסירה ${i+1}</span>
+        ${legs.length>2?`<button class="leg-del" onclick="removeLeg(${i})">✕</button>`:''}
+      </div>
+      <div class="leg-from">📍 ${origin} →</div>
+      <div class="field">
+        <label class="flabel req">כתובת מסירה ${i+1}</label>
+        <div class="irow">
+          <span>📍</span>
+          <input value="${l.toAddr}" placeholder="רחוב, מספר, עיר" oninput="legs[${i}].toAddr=this.value;legs[${i}].autoKm=null;legs[${i}].useAuto=false;renderAll()"/>
+          ${l.useAuto&&l.autoKm?'<span class="ok">✓</span>':''}
+        </div>
+      </div>
+      <div class="field">
+        <label class="flabel req">טלפון איש קשר</label>
+        <div class="irow">
+          <span>📞</span>
+          <input type="tel" value="${l.toPhone}" placeholder="050-0000000" oninput="legs[${i}].toPhone=this.value"/>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;font-size:11px;color:var(--muted)">
+        <span>מרחק מהעצירה הקודמת</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">${km.toFixed(1)} ק״מ${autoTag}</span>
+      </div>
+      ${!(l.useAuto&&l.autoKm!==null)?`<input type="range" min="0.5" max="40" step="0.5" value="${l.manualKm}" oninput="legs[${i}].manualKm=+this.value;renderAll()" style="margin-top:4px">`:''}
+      ${l.useAuto&&l.autoKm!==null?`<button onclick="legs[${i}].useAuto=false;renderAll()" style="background:none;border:none;color:var(--muted);font-size:10px;cursor:pointer;margin-top:2px;font-family:'Heebo',sans-serif">ידני</button>`:''}
+    </div>`;
+  });
+}
+function renderAll(){renderHero();renderSizes();renderUrgencies();renderKm();renderLegs();renderPrice();}
+
+/* ── Init chips ── */
+function initChips(){
+  document.getElementById('km-chips').innerHTML=KM_PRESETS.map(k=>`<button class="chip${manualKm===k?' active':''}" onclick="setKmPreset(${k})">${k} ק״מ</button>`).join('');
+}
+
+/* ── Actions ── */
+function setMode(m){
+  mode=m;
+  document.getElementById('single-section').classList.toggle('hidden',m==='bundle');
+  document.getElementById('bundle-section').classList.toggle('hidden',m==='single');
+  document.getElementById('btn-single').classList.toggle('active',m==='single');
+  document.getElementById('btn-bundle').classList.toggle('active',m==='bundle');
+  renderAll();
+}
+function selectSize(id){selectedSize=id;renderAll();}
+function selectUrgency(id){selectedUrgency=id;renderAll();}
+function onFromChange(){document.getElementById('from-ok').classList.add('hidden');renderHero();}
+function onToChange(){document.getElementById('to-ok').classList.add('hidden');autoKm=null;useAuto=false;renderKm();renderHero();}
+function onKmSlide(v){manualKm=+v;initChips();renderKm();renderPrice();}
+function setKmPreset(k){manualKm=k;document.querySelector('input[type=range]').value=k;initChips();renderKm();renderPrice();}
+function toggleManual(){useAuto=!useAuto;renderKm();renderPrice();}
+function addLeg(){legs.push({toAddr:'',toPhone:'',manualKm:5,autoKm:null,useAuto:false,autoMin:0});renderAll();}
+function removeLeg(i){if(legs.length<=2)return;legs.splice(i,1);renderAll();}
+
+/* ── API route check ── */
+async function askClaude(from,to){
+  const prompt=`Two addresses in Israel:\nFrom: "${from}"\nTo: "${to}"\nFind the driving distance in km and duration in minutes.\nRespond ONLY with raw JSON: {"valid":true,"from_normalized":"...","to_normalized":"...","distance_km":12.3,"duration_min":18,"reason":""}\nIf invalid: {"valid":false,"reason":"reason in Hebrew"}`;
+  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:300,messages:[{role:'user',content:prompt}],tools:[{type:'web_search_20250305',name:'web_search'}]})});
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message);
+  const txt=(d.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').replace(/```json|```/g,'').trim();
+  const m=txt.match(/\{[\s\S]*\}/);
+  return JSON.parse(m?m[0]:txt);
+}
+
+async function checkSingleRoute(){
+  if(checking)return;
+  const from=document.getElementById('from-addr').value.trim();
+  const to=document.getElementById('to-addr').value.trim();
+  if(!from||!to){showCheckErr('נא להזין כתובת איסוף ומסירה');return;}
+  checking=true;
+  const btn=document.getElementById('check-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spin">⟳</span> מחשב מסלול...';
+  hideEl('check-err');hideEl('check-ok');
+  try{
+    const r=await askClaude(from,to);
+    if(!r.valid){autoKm=null;useAuto=false;showCheckErr(r.reason||'כתובות לא זוהו');return;}
+    if(r.from_normalized)document.getElementById('from-addr').value=r.from_normalized;
+    if(r.to_normalized)document.getElementById('to-addr').value=r.to_normalized;
+    autoKm=+r.distance_km;autoMin=+r.duration_min;useAuto=true;
+    document.getElementById('from-ok').classList.remove('hidden');
+    document.getElementById('to-ok').classList.remove('hidden');
+    showEl('check-ok');document.getElementById('check-ok').textContent=`✓ ${autoKm.toFixed(1)} ק״מ · כ-${Math.round(autoMin)} דק׳`;
+    renderKm();renderHero();renderPrice();
+  }catch(e){autoKm=null;useAuto=false;showCheckErr('שגיאת רשת — הזן מרחק ידנית');}
+  finally{checking=false;btn.disabled=false;btn.innerHTML='🔍 חשב מרחק נסיעה אוטומטית';}
+}
+
+async function checkBundleRoute(){
+  if(checking)return;
+  const from=document.getElementById('from-addr').value.trim();
+  if(!from){showBundleErr('נא להזין כתובת איסוף');return;}
+  if(legs.some(l=>!l.toAddr.trim())){showBundleErr('נא למלא את כל כתובות המסירה');return;}
+  checking=true;
+  const btn=document.getElementById('check-bundle-btn');
+  btn.disabled=true;btn.innerHTML=`<span class="spin">⟳</span> מחשב ${legs.length} מסלולים...`;
+  hideEl('bundle-check-err');
+  try{
+    for(let i=0;i<legs.length;i++){
+      const origin=i===0?from:legs[i-1].toAddr;
+      const r=await askClaude(origin,legs[i].toAddr.trim());
+      if(!r.valid){showBundleErr(`מסירה ${i+1}: ${r.reason||'כתובת לא זוהתה'}`);return;}
+      legs[i].autoKm=+r.distance_km;legs[i].autoMin=+r.duration_min;legs[i].useAuto=true;
+      if(r.to_normalized)legs[i].toAddr=r.to_normalized;
+      renderLegs();renderPrice();
+    }
+  }catch(e){showBundleErr('שגיאת רשת — הזן מרחקים ידנית');}
+  finally{checking=false;btn.disabled=false;btn.innerHTML=`🔍 חשב מרחקים לכל ${legs.length} מסירות`;}
+}
+
+/* ── Submit ── */
+function submitOrder(){
+  const from=document.getElementById('from-addr').value.trim();
+  const fromPhone=document.getElementById('from-phone').value.trim();
+  if(!from){showSubmitErr('נא להזין כתובת איסוף');return;}
+  if(!fromPhone){showSubmitErr('נא להזין טלפון באיסוף');return;}
+  if(!selectedSize){showSubmitErr('נא לבחור גודל חבילה');return;}
+  if(!selectedUrgency){showSubmitErr('נא לבחור רמת דחיפות');return;}
+
+  const sizeLabel=SIZES.find(s=>s.id===selectedSize)?.label||selectedSize;
+  const urgLabel=URGENCIES.find(u=>u.id===selectedUrgency)?.label||selectedUrgency;
+  const total=calcTotal();
+  const orderId='ORD-'+Date.now().toString(36).toUpperCase();
+  const notes=document.getElementById('notes').value.trim();
+
+  let msg='';
+  if(mode==='single'){
+    const to=document.getElementById('to-addr').value.trim();
+    const toPhone=document.getElementById('to-phone').value.trim();
+    if(!to){showSubmitErr('נא להזין כתובת מסירה');return;}
+    if(!toPhone){showSubmitErr('נא להזין טלפון במסירה');return;}
+    const km=(useAuto&&autoKm!==null?autoKm:manualKm).toFixed(1);
+    msg=`🚚 *הזמנת שליחות – מסלול*\nמספר: ${orderId}\n\n📦 ${sizeLabel}  |  ⚡ ${urgLabel}\n\n📍 *איסוף:* ${from}\n☎️ ${fromPhone}\n🏁 *מסירה:* ${to}\n☎️ ${toPhone}\n\n📏 ${km} ק״מ  💰 ₪${total}`+(notes?`\n📝 ${notes}`:'');
+  } else {
+    for(let i=0;i<legs.length;i++){
+      if(!legs[i].toAddr.trim()){showSubmitErr(`נא להזין כתובת מסירה ${i+1}`);return;}
+      if(!legs[i].toPhone.trim()){showSubmitErr(`נא להזין טלפון למסירה ${i+1}`);return;}
+    }
+    const legsText=legs.map((l,i)=>{
+      const km=(l.useAuto&&l.autoKm!==null?l.autoKm:l.manualKm).toFixed(1);
+      const p=i===0?Math.round((40+legCost(l.useAuto&&l.autoKm!==null?l.autoKm:l.manualKm))*(URGENCIES.find(u=>u.id===selectedUrgency)?.mult??1)):Math.round(legCost(l.useAuto&&l.autoKm!==null?l.autoKm:l.manualKm));
+      return `🏁 *מסירה ${i+1}:* ${l.toAddr}\n☎️ ${l.toPhone}\n   📏 ${km} ק״מ  💰 ₪${p}`;
+    }).join('\n');
+    msg=`🚚 *הזמנת שליחות בנדל – מסלול*\nמספר: ${orderId}\n\n📦 ${sizeLabel}  |  ⚡ ${urgLabel}\n\n📍 *איסוף:* ${from}\n☎️ ${fromPhone}\n\n${legsText}\n\n💰 *סה״כ: ₪${total}*`+(notes?`\n📝 ${notes}`:'');
+  }
+
+  hideEl('submit-err');
+  const url='https://wa.me/'+WA+'?text='+encodeURIComponent(msg);
+  window.open(url,'_blank');
+  // reset
+  document.getElementById('from-addr').value='';document.getElementById('from-phone').value='';
+  document.getElementById('to-addr').value='';document.getElementById('to-phone').value='';
+  document.getElementById('notes').value='';
+  selectedSize=null;selectedUrgency=null;manualKm=5;autoKm=null;useAuto=false;
+  legs=[{toAddr:'',toPhone:'',manualKm:5,autoKm:null,useAuto:false,autoMin:0},{toAddr:'',toPhone:'',manualKm:5,autoKm:null,useAuto:false,autoMin:0}];
+  document.getElementById('from-ok').classList.add('hidden');
+  document.getElementById('to-ok').classList.add('hidden');
+  document.getElementById('success-msg').textContent=`הזמנה ${orderId} נשלחה לוואטסאפ`;
+  showEl('success-box');setTimeout(()=>hideEl('success-box'),5000);
+  renderAll();initChips();
+}
+
+/* ── Helpers ── */
+function showEl(id){document.getElementById(id).classList.remove('hidden');}
+function hideEl(id){document.getElementById(id).classList.add('hidden');}
+function showCheckErr(msg){const el=document.getElementById('check-err');el.textContent='⚠️ '+msg;el.classList.remove('hidden');}
+function showBundleErr(msg){const el=document.getElementById('bundle-check-err');el.textContent='⚠️ '+msg;el.classList.remove('hidden');}
+function showSubmitErr(msg){const el=document.getElementById('submit-err');el.textContent='⚠️ '+msg;el.classList.remove('hidden');}
+
+/* ── Boot ── */
+initChips();renderAll();
+</script>
+</body>
+</html>
